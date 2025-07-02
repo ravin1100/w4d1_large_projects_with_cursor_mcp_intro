@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MCP Q&A Chatbot</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link rel="icon" type="image/png" href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAAAJESURBVFhH7ZY9aBRBFMf/b3Zv70zOmA+JiYXYKIKFYKWFhYVgYWMhFoKFhYWFhYWFhYWFhYWFhYWFhYWFYGEhiEgKQVEUFUUxl8Tu7c7u+GZ2L5t4M7N3c4W5H7yb2Zn3Mf+8eTO7K6BhXcDuYL/gv0CQy+WQTqfR6XTQ7XYxHA7R7/fR6/V2XMg5h+M4cF0XqVQKyWQSnueB/pd4PI5YLKYFBIIgQKvVwmg0wtbWFprNJhqNBur1OmzbRqlUQj6fRyaTQSKR0AKWZSGVSsG2bcRiMViWpQWCIIDneahUKlhfX8fKygqWl5c1gUwmg3K5jEKhgGw2i3g8DsdxtEA0GkUkEoFlWVqAMQbGGCilCAaDQbBer4fNzU2srq5idXUVy8vLWFpawuLiIhYWFjA/P4+5uTnMzs5iZmYG09PTmJqawuTkJCYmJuD7vhYIhUJwXReRSASUUlDGOBhjIIQgFAqBEAJCCKIR9kcoRRiEwHVdxGIxeJ4H3/eRSCS0gG3bcF0XjDFQSikDY4AQEIpQKIowY3AcB67nwfd8eK4H1/PgeR5c14XruvB9H77vI51OI5vNYmxsDGNjY8hkMshms8hkMshkMshms8hms8hms8jlcshms8jlcshms8jn88jn8xgfH8fExAQmJycxNTWF6elpTE1NYWZmBrOzs5ibm8P8/DwWFhawuLiIpaUlLC0t4erqDTx7/hL37j/C7TsPcevOQ9y88wg3bj/C9VsPcP3mA1y7eR/Xbt7HtRv3/pzAT7u2/5y5M3hoAAAAAElFTkSuQmCC">
+    <style>
+        .chat-container {
+            height: calc(100vh - 200px);
+        }
+        .message {
+            max-width: 80%;
+            margin: 10px;
+            padding: 10px 15px;
+            border-radius: 15px;
+        }
+        .user-message {
+            background-color: #e2e8f0;
+            margin-left: auto;
+        }
+        .bot-message {
+            background-color: #4299e1;
+            color: white;
+            margin-right: auto;
+        }
+        .source-tag {
+            font-size: 0.8em;
+            opacity: 0.8;
+            margin-top: 5px;
+        }
+    </style>
+</head>
+<body class="bg-gray-100">
+    <div class="container mx-auto px-4 py-8">
+        <h1 class="text-3xl font-bold text-center mb-8">MCP Q&A Chatbot</h1>
+        
+        <div class="bg-white rounded-lg shadow-lg p-4">
+            <div id="chat-messages" class="chat-container overflow-y-auto mb-4">
+                <div class="bot-message message">
+                    Hello! I'm your MCP expert assistant. Ask me anything about Model Context Protocol!
+                </div>
+            </div>
+            
+            <div class="flex gap-2">
+                <input type="text" id="question-input" 
+                    class="flex-1 px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    placeholder="Type your question about MCP...">
+                <button onclick="askQuestion()" 
+                    class="bg-blue-500 text-white px-6 py-2 rounded-lg hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                    Ask
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const chatMessages = document.getElementById('chat-messages');
+        const questionInput = document.getElementById('question-input');
+
+        questionInput.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                askQuestion();
+            }
+        });
+
+        async function askQuestion() {
+            const question = questionInput.value.trim();
+            if (!question) return;
+
+            // Add user message
+            addMessage(question, 'user');
+            questionInput.value = '';
+
+            try {
+                const response = await fetch('/api/ask', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ text: question }),
+                });
+
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+
+                const data = await response.json();
+                
+                // Add bot message
+                addMessage(data.answer, 'bot', data.source);
+            } catch (error) {
+                console.error('Error:', error);
+                addMessage('Sorry, I encountered an error. Please try again.', 'bot');
+            }
+        }
+
+        function addMessage(text, sender, source = null) {
+            const messageDiv = document.createElement('div');
+            messageDiv.className = `message ${sender}-message`;
+            
+            const textDiv = document.createElement('div');
+            textDiv.textContent = text;
+            messageDiv.appendChild(textDiv);
+
+            if (source) {
+                const sourceDiv = document.createElement('div');
+                sourceDiv.className = 'source-tag';
+                sourceDiv.textContent = `Source: ${source}`;
+                messageDiv.appendChild(sourceDiv);
+            }
+
+            chatMessages.appendChild(messageDiv);
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+        }
+    </script>
+</body>
+</html> 
