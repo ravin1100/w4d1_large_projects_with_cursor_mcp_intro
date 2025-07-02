@@ -2,8 +2,10 @@
 
 A specialized chatbot that answers questions about Model Context Protocol (MCP). The chatbot uses a combination of a local knowledge base and the Google Gemini API to provide accurate and detailed responses about MCP concepts, implementation, best practices, and troubleshooting.
 
-![MCP Q&A Chatbot Interface](https://i.imgur.com/placeholder.png)
-(Note: Replace the placeholder.png with an actual screenshot of your UI)
+## UI Screenshot
+![MCP Q&A Chatbot Interface](./static/images/main_ui.png)
+
+*The chatbot provides clear answers with source attribution, using either the local knowledge base or Gemini AI.*
 
 ## Features
 
