@@ -1,0 +1,153 @@
+---
+description: 
+globs: 
+alwaysApply: true
+---
+# AI-Powered Product Recommendation System - Cursor Rules
+
+## Project Overview
+This is a full-stack AI-powered product recommendation system built with:
+- **Frontend**: React + Vite + Tailwind CSS
+- **Backend**: FastAPI + PostgreSQL
+- **AI/ML**: Scikit-learn for content-based filtering
+- **Authentication**: JWT tokens
+- **Features**: User auth, product catalog, recommendation engine, interaction tracking
+
+## Architecture Guidelines
+
+### Frontend (React + Vite)
+- Use functional components with hooks exclusively
+- Implement custom hooks for data fetching and state management
+- Use React Context for global state (auth, user preferences)
+- Implement proper error boundaries and loading states
+
+### Backend (FastAPI)
+- Use async/await for all database operations
+- Implement proper dependency injection for database sessions
+- Use Pydantic models for request/response validation
+- Follow RESTful API design principles
+- Implement proper error handling with custom exceptions
+- Use SQLAlchemy ORM with async support
+
+### Database Design
+- Use PostgreSQL with proper indexing for performance
+- Implement foreign key relationships properly
+- Use UUID for primary keys
+- Include created_at and updated_at timestamps
+- Design for scalability with proper normalization
+
+## Code Style and Standards
+
+### General
+- Use meaningful variable and function names
+- Write docstrings for all functions and classes
+- Implement proper logging throughout the application
+- Use environment variables for configuration
+- Follow DRY (Don't Repeat Yourself) principles
+
+### Python (Backend)
+- Follow PEP 8 style guidelines
+- Use type hints for all function parameters and return types
+- Implement proper exception handling
+- Use async/await for I/O operations
+- Organize imports: standard library, third-party, local imports
+
+### JavaScript/React (Frontend)
+- Use camelCase for variables and functions
+- Use PascalCase for components
+- Implement proper prop validation
+- Use destructuring for props and state
+- Follow ESLint and Prettier configurations
+
+## AI/ML Implementation
+
+### Recommendation Engine
+- Implement content-based filtering using cosine similarity
+- Use TF-IDF for text feature extraction from product descriptions
+- Normalize numerical features (price, ratings) for better similarity calculations
+- Implement fallback recommendations for new users (popularity-based)
+
+### Data Processing
+- Preprocess product descriptions (lowercase, remove stopwords)
+- Handle missing values appropriately
+- Implement feature scaling for numerical data
+- Use pandas for data manipulation
+- Store processed features in database for efficiency
+
+## Authentication & Security
+
+### JWT Implementation
+- Use secure secret keys (store in environment variables)
+- Implement token refresh mechanism
+- Set appropriate token expiration times
+- Hash passwords using bcrypt
+- Validate tokens on protected routes
+
+### Security Best Practices
+- Implement rate limiting on API endpoints
+- Use HTTPS in production
+- Sanitize all user inputs
+- Implement proper CORS configuration
+- Use environment variables for sensitive data
+
+## Database Schema
+
+### Core Tables
+```sql
+-- Users table
+users: id (UUID), email, password_hash, first_name, last_name, created_at, updated_at
+
+-- Products table
+products: id (UUID), name, category, price, description, rating, image_url, stock, created_at
+
+-- User interactions table
+user_interactions: id (UUID), user_id (FK), product_id (FK), interaction_type (like/view/purchase), created_at
+
+-- Recommendations table (cache)
+recommendations: id (UUID), user_id (FK), product_id (FK), score, created_at
+
+
+API Endpoints Structure
+Authentication
+
+POST /auth/register - User registration
+POST /auth/login - User login
+POST /auth/refresh - Token refresh
+POST /auth/logout - User logout
+
+Products
+
+GET /products - List products with filtering and pagination
+GET /products/{id} - Get product details
+GET /products/categories - Get product categories
+GET /products/search - Search products
+
+Recommendations
+
+GET /recommendations/user/{user_id} - Get user recommendations
+POST /interactions - Track user interactions
+GET /recommendations/similar/{product_id} - Get similar products
+
+Testing Strategy
+Frontend Testing
+
+Use React Testing Library for component tests
+Test user interactions and state changes
+Mock API calls in tests
+Test authentication flows
+Implement E2E tests for critical paths
+
+Backend Testing
+
+Use pytest for unit and integration tests
+Test all API endpoints
+Mock external dependencies
+Test authentication and authorization
+Test recommendation algorithm accuracy
+
+ML Testing
+
+Test recommendation algorithm with sample data
+Validate similarity calculations
+Test edge cases (new users, no interactions)
+Performance testing for recommendation generation
